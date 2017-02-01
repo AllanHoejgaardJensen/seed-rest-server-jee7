@@ -1,0 +1,13 @@
+<weblogic-ejb-jar>
+    <!-- The security model in WebLogic requires that the group principal must be mapped to
+      a Java EE role. Since the JAX-RS endpoint is a stateless session bean this mapping
+      must be created in the weblogic-ejb-jar.xml (or in the WebLogic console) -->
+    <security-role-assignment>
+        <role-name>advisor</role-name>
+        <principal-name>advisor</principal-name>
+    </security-role-assignment>
+    <security-role-assignment>
+        <role-name>tx-system</role-name>
+        <principal-name>tx-system</principal-name>
+    </security-role-assignment>
+</weblogic-ejb-jar>

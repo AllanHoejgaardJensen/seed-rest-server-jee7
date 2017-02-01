@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="org.dom4j" />
+            <module name="org.antlr" />
+        </dependencies>
+        <exclusions>
+            <module name="org.hibernate" />
+            <module name="org.jboss.resteasy.resteasy-jackson-provider" />
+            <module name="org.jboss.resteasy.resteasy-jackson2-provider" />
+            <module name="org.slf4j" />
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>

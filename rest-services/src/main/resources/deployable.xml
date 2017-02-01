@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration xsi:schemaLocation="http://nykredit.dk/nif/component/configuration/schema configuration.xsd"
+               xmlns="http://nykredit.dk/nif/component/configuration/schema"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <section name="application">
+        <param name="name">sample</param>
+        <param name="asmId">99999X</param>
+        <param name="deployable">sample</param>
+        <param name="version">${project.version}</param>
+    </section>
+
+</configuration>

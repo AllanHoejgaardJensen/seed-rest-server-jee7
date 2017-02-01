@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+- NOTE: This file is only used when running locally!
+-->
+
+<configuration debug="false">
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %X{appName} %X{logToken} %-5p %c{5} - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="RESTLOGGER" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{ISO8601} %X{appName} %X{logToken} %-5p %c{5} - request body: %X{REST_RequestBody}%n response body: %X{REST_ResponseBody}%n"/>
+        </layout>
+    </appender>
+
+    <logger sirname="REST-LOGGER">
+        <!-- <level value="trace"/ -->
+        <appender-ref ref="RESTLOGGER"/>
+    </logger>
+
+    <root>
+        <level value="info"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
