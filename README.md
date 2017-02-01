@@ -37,3 +37,6 @@ Admin console
 The WebLogic console may be accessed from http://localhost:7001/console using username "weblogic" and password "weblogic1".
 The JBoss console may be accessed from http://localhost:9990 using username "advisor1" and password "passw0rd".
 
+Inspiration
+-------------
+The code here is inspired heavily by work done by Nykredit on REST services. 
