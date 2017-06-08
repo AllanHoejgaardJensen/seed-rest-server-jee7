@@ -103,30 +103,6 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>dk.nykredit.maven.plugins</groupId>
-                <artifactId>configuration-maven-plugin</artifactId>
-                <version>${dk.nykredit.maven.plugins.version}</version>
-                <configuration>
-                    <ignoreNonMasterConfiguratorFiles>false</ignoreNonMasterConfiguratorFiles>
-                    <copyNonMasterConfiguratorFiles>true</copyNonMasterConfiguratorFiles>
-                    <environments>
-                        <environment>local</environment>
-                        <environment>xdt1</environment>
-                        <environment>i1</environment>
-                        <environment>p1</environment>
-                    </environments>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>config-multiple</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
                 <configuration>

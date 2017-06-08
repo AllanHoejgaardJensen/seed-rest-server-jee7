@@ -45,7 +45,6 @@
         <org.glassfish.jersey.version>2.25</org.glassfish.jersey.version>
         <org.javassist.version>3.20.0-GA</org.javassist.version>
         <resteasy.version>3.0.10.Final</resteasy.version>
-        <dk.nykredit.maven.plugins.version>4.0.36</dk.nykredit.maven.plugins.version>
         <swagger-maven-plugin.version>3.1.4</swagger-maven-plugin.version>
         <swagger-hal.version>1.0.1</swagger-hal.version>
     </properties>
