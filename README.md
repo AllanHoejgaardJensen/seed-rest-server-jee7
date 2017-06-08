@@ -39,4 +39,4 @@ The JBoss console may be accessed from http://localhost:9990 using username "adv
 
 Inspiration
 -------------
-The code here is inspired heavily by work done by Nykredit on REST services. 
+The code here is inspired heavily by work done by Nykredit on REST services.
