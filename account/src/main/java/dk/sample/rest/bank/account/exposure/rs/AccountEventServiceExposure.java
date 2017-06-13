@@ -84,7 +84,7 @@ public class AccountEventServiceExposure {
                             @HeaderParam("X-Log-Token") String xLogToken,
                             @QueryParam("interval") String interval) {
         return eventsProducers.getOrDefault(accept, this::handleUnsupportedContentType)
-            .getResponse(uriInfo, request, interval);
+            .getResponse(uriInfo, request, xLogToken, interval);
     }
 
 
@@ -112,7 +112,7 @@ public class AccountEventServiceExposure {
                                   @PathParam("category") @Pattern(regexp = "^[a-zA-Z0-9-]{36}]") String category,
                                   @QueryParam("interval") String interval) {
         return eventCategoryProducers.getOrDefault(accept, this::handleUnsupportedContentType)
-            .getResponse(uriInfo, request, category, interval);
+            .getResponse(uriInfo, request, xLogToken, category, interval);
     }
 
     @GET
@@ -138,14 +138,14 @@ public class AccountEventServiceExposure {
                               @PathParam("category")  @Pattern(regexp = "^[a-zA-Z0-9-]{36}]") String category,
                               @PathParam("id") String id) {
         return eventProducers.getOrDefault(accept, this::handleUnsupportedContentType)
-            .getResponse(uriInfo, request, category, id);
+            .getResponse(uriInfo, request, xLogToken, category, id);
     }
 
     @LogDuration(limit = 50)
-    public Response listAllSG1V1(UriInfo uriInfo, Request request, String interval) {
+    public Response listAllSG1V1(UriInfo uriInfo, Request request, String xLogToken, String interval) {
         Optional<Interval> withIn = Interval.getInterval(interval);
         List<Event> events = archivist.findEvents(withIn);
-        return new EntityResponseBuilder<>(events, txs -> new EventsRepresentation(events, uriInfo))
+        return new EntityResponseBuilder<>(events, txs -> new EventsRepresentation(events, uriInfo), xLogToken)
             .name("events")
             .version("1")
             .maxAge(60)
@@ -153,10 +153,10 @@ public class AccountEventServiceExposure {
     }
 
     @LogDuration(limit = 50)
-    public Response listByCategorySG1V1(UriInfo uriInfo, Request request, String category, String interval) {
+    public Response listByCategorySG1V1(UriInfo uriInfo, Request request, String xLogToken, String category, String interval) {
         Optional<Interval> withIn = Interval.getInterval(interval);
         List<Event> events = archivist.getEventsForCategory(category, withIn);
-        return new EntityResponseBuilder<>(events, txs -> new EventsRepresentation(events, uriInfo))
+        return new EntityResponseBuilder<>(events, txs -> new EventsRepresentation(events, uriInfo), xLogToken)
             .name("eventcategory")
             .version("1")
             .maxAge(60)
@@ -164,34 +164,29 @@ public class AccountEventServiceExposure {
     }
 
     @LogDuration(limit = 50)
-    public Response getSG1V1(UriInfo uriInfo, Request request, String category, String id) {
+    public Response getSG1V1(UriInfo uriInfo, Request request, String xLogToken, String category, String id) {
         Event event = archivist.getEvent(category, id);
-        return new EntityResponseBuilder<>(event, e -> new EventRepresentation(e, uriInfo))
+        return new EntityResponseBuilder<>(event, e -> new EventRepresentation(e, uriInfo), xLogToken)
             .maxAge(7 * 24 * 60 * 60)
             .name("event")
             .version("1")
             .build(request);
     }
 
-    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String interval) {
-        return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
-    }
-
-    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String category, String id) {
+    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String... params) {
         return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
     }
 
     interface EventsProducerMethod {
-        Response getResponse(UriInfo uriInfo, Request request, String interval);
+        Response getResponse(UriInfo uriInfo, Request request, String xLogToken, String interval);
     }
 
     interface EventProducerMethod {
-        Response getResponse(UriInfo uriInfo, Request request, String category, String id);
+        Response getResponse(UriInfo uriInfo, Request request, String xLogToken, String category, String id);
     }
 
     interface EventsCategoryProducerMethod {
-        Response getResponse(UriInfo uriInfo, Request request, String interval, String category);
+        Response getResponse(UriInfo uriInfo, Request request, String xLogToken, String interval, String category);
     }
-
 
 }

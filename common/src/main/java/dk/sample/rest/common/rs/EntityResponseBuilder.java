@@ -168,18 +168,18 @@ public class EntityResponseBuilder<E, R> {
         Response.ResponseBuilder b = Response.ok(mapper.apply(entity))
             .type(type)
             .tag(eTag)
-            .lastModified(lastModified);
+            .lastModified(lastModified)
+            .header("X-Log-Token", logToken)
+            .header("X-RateLimit-Limit", rateLimit)
+            .header("X-RateLimit-Limit-24h", rateLimit24h)
+            .header("X-RateLimit-Remaining", rateLimitRemaining)
+            .header("X-RateLimit-Reset", rateLimitTime2Reset);
 
         if (maxAge != null) {
             CacheControl cc = new CacheControl();
             cc.setMaxAge(maxAge);
             b.cacheControl(cc).expires(Date.from(Instant.now().plusSeconds(maxAge)));
         }
-        parameters.put("X-Log-Token", logToken);
-        parameters.put("X-RateLimit-Limit", rateLimit);
-        parameters.put("X-RateLimit-Limit-24h", rateLimit24h);
-        parameters.put("X-RateLimit-Remaining", rateLimitRemaining);
-        parameters.put("X-RateLimit-Reset", rateLimitTime2Reset);
         return b.build();
     }
 

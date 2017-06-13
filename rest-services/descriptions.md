@@ -10,10 +10,18 @@ This API shows a very simple set of resources that emulate two micro-services wh
 A semantic REST API is used and thus also HATEOAS in form of
 [HAL](http://stateless.co/hal_specification.html).
 
-The API can be versioned at the structural level by means of a HTTP Header and at the content level in each endpoint by means of the
-content-type.
+The API can be versioned at the structural level by means of a HTTP Header and at the content level in each endpoint by means of the content-type. Every response holds the content-type with parameters and that is how client can know exactly what content version they get back. 
 
-## HTTP Headers used
+### Example of content versioning
+
+If a client puts `application/hal+json` in  the `Accept` header - that client will get the newest eiditon of content produced with the default projection from the target endpoint of the request.
+
+That might be `application/hal+json;concept=account;v=1` today and be `application/hal+json;concept=account;v=2` next week. 
+
+The idea is that the client evaluates, whether the new version poses a problem or not and if the new version creates a problem the client puts `application/hal+json;concept=account;v=1` in the Accept header and get the old one (whilst looking at the change necessary to cope with `application/hal+json;concept=account;v=2`) - because not every effect on the clients can be found out at the model level (e.g. a field is expanded from 20 to 50 on the service side should not be a problem - unless the UI looks weird given that long values now can appear) therefore it is a good idea to lets users have a "something looks weird" action in order to know when a new version is accepted or not. Once a version is accepted by the client this version can be saved for that endpoint. This helps the client knowing what to put into the Accept header in the event of a new version making trouble on the client side. In order to make this fast and waterproof a server-side resource may be relevant for helping out clients that are initially started late.
+
+
+## HTTP Request Headers used
 
 A number of headers are used:
 
@@ -39,24 +47,19 @@ resources. The versions are numbered according to [semver-org](http://semver.org
 
 ### Versions
 
-There are two major forms of versioning: one is related to the structure of the API, the other is related to the contents in each endpoint in
-the API.
+There are two major forms of versioning: one is related to the structure of the API, the other is related to the contents in each endpoint in the API. 
 
 The two different aspects are handled in each their dedicated fashion.
 
 The `X-Service-Generation` HTTP header is used for signalling the version of the API structure instead of having the version as a part of the
 baseURL.
 
-The content-type includes version information and is returned in every response from the service. The content-type can do that in a couple of
-ways: 
+The content-type includes version information and is returned in every response from the service. The content-type can do that in a couple of ways: 
 
 * using `"_links": {"href": "..."}` with no `"type"` will point to the newest and current content at the referenced endpoint.
-* using  `"_links": {"href": "...", "type": "application/hal+json;v=1"}` with `"type"` will point to the specified version at the referenced
-  endpoint.
+* using  `"_links": {"href": "...", "type": "application/hal+json;v=1"}` with `"type"` will point to the specified version at the referenced endpoint.
 
-The client must know if a problem has occurred in a situation, where the contents from a service endpoint was updated in a way that this
-particular client could not cope with. Therefore it must know what version works and the HAL specification can be used to decorate the
-`"_links":` object with the version of the content that it understands. That lets the client include the understandable content-type as defined
+The client must know if a problem has occurred in a situation, where the contents from a service endpoint was updated in a way that this particular client could not cope with. Therefore it must know what version works and the HAL specification can be used to decorate the `"_links":` object with the version of the content that it understands. That lets the client include the understandable content-type as defined
 in `"_links":` and include that as the value of the "Accept" header.
 
 An example of such client side decorated response from a server, where the default and newest content-type are "overwritten" by the type for the
@@ -306,12 +309,28 @@ Therefore the server returns a `503` error code (see response codes below) with 
 the server is no longer busy and can serve a consumer again.
 
 If the server-side intercepts the consumer it may choose to return a `429` *Too many Requests* with a response stating that "You are limited to
-XXXX requests per hour per `access_token` or `client_id` in total per `timeunit` overall.
+XXXX requests per hour per `access_token` or `client_id` in total per `timeunit` overall, which clients can follow from the response headers `X-RateLimit-*`.
 
 ## Responses
 
 The responses from calling resources in the API adheres to the HTTP specification and thus the status code and the headers used are found in
-that specification.
+that specification. All responses includes a X-Log-Token which is either the client defined correlation ID or a generated 36 characters long UUID 
+that the service generates and the client can use if needed to further requests. The recommendation is that clients starts their version of the 
+X-Log-Token with a unique prefix in order for clients getting access to the result that is concerned with that particular client in an easy way.
+The following Headers are included in responses:
+
+- `Content-Type` - the concrete content-type such as application/hal+json;concept=account;v=2
+- `(Content-Encoding not in the seed yet)` - is the response e.g. compressed, gzipped etc.
+- `ETag` - the unique hash for the values of the content copy
+- `Expires` - the time the validity for the resource content "copy" expires
+- `Last Modified` - the time recorded for the last modification of the resource
+- `Cache Control` - the audience, state and cache ability of the copy
+- `X-Log-Token` - a 36 character string 
+- `X-RateLimit-Limit` - Request limit per minute
+- `X-RateLimit-Limit24h` - Request limit per 24h
+- `X-RateLimit-Remaining` - Requests left for the domain/resource for the 24h (locally determined)
+- `X-RateLimit-Reset` - The remaining window before the rate limit resets in UTC epoch seconds
+
 
 ### Status Codes
 
@@ -322,7 +341,9 @@ Information on status code and headers are found under:
 
 A couple of response codes will be described here as inspiration, but the most important thing is to work with the protocol and understand what
 the status codes mean and how they fit into the current situation in the API. It should signal explicitly what the client can expect in every
-situation in order to make the API as developer friendly as possible.
+situation in order to make the API as developer friendly as possible. The recommended set of responses will vary with your needs. 
+
+    A tool is under development that aims at ensuring that the responses defined in your API makes it possible to develop services with a high velocity without making clients suffer when the API is evolving.
 
 #### 200 OK
 
@@ -336,7 +357,7 @@ The `201 Created` follows after a successful `POST` or `PUT` and states where th
 #### 202 Accepted
 
 The `202 Accepted` response signals that the request was understood and the response will follow later. The `Location` header should state where
-information can be obtained later. To be nice, the `Retry_After` header may issue a timeframe for when it makes sense to ask for a status again:
+information can be obtained later. To be nice, the `Retry-After` header may issue a time frame for when it makes sense to ask for a status again:
 
     Location: http://get/the/new/status/location
     Retry-After: 30
@@ -346,11 +367,41 @@ It is important to notice that the introduction of a 202 response would cause co
 and thus the service generation must be increased and therefore consumers of the "previous" version without the 202 must include the header
 `X-Service-Generation` in the consumer requests.
 
+If you did not include that response as a part of your API before starting moving your resources, clients will typically not 
+have that included in their programming model and thus experience this as a breaking change.
+
+#### 203 Non Authoritative
+
+The `203 Non Authoritative` can be used to indicate towards clients that the content is either entirely or partly not 
+origin from the endpoint itself. This means that information can cone from 3rd parties. 
+(Btw. it is important if you use that scenario - that you know your right to actually pass information on from that 3rd party.)
+
+#### 204 No Content
+
+The `204 No Content` can be used to indicate towards clients that a resource exists and the operation went well, and 
+metadata may be returned, the body is however empty.
+
+
 #### 301 Moved Permanently
 
-The `301` is issued if a resource is no longer at the place where it used to be.
+The `301` is issued if a resource is no longer at the place where it used to be. This is one of the important response codes
+to have as a part of your API specification, as this allows you to move endpoints as the service evolves. If you did not include
+that response as a part of your API before starting moving your resources, clients will typically not have that included in their
+programming model and thus experience this as a breaking change.
 
 For instance this could be a resource that has moved to a different part of the API. In that case a `301` is returned with a `Location` header
+containing the new position:
+
+    Location: http://this/is/the/new/location
+
+### 304 Not Modified
+The `304` is worth considering for service offload as this allows the service to operate with a lower server capacity.
+
+#### 307 Temporary Redirect
+
+The `307` is issued if a resource is no longer at the place where it used to be for a while.
+
+For instance this could be a resource that has moved to a different part of the API. In that case a `307` is returned with a `Location` header
 containing the new position:
 
     Location: http://this/is/the/new/location
@@ -377,6 +428,18 @@ The `404` response states that the resource requested did not exist.
 The `409` response states that the request for the resource is resulting in a form of conflict, which the client must resolve before retrying.
 This could be trying to POST changes to an object that would cause the object to be in an erroneous state.
 
+#### 410 Gone
+
+The `410` response states that the resource is gone and this allows for taking the deprecation of a resource to the next level.
+
+#### 412 Precondition Failed
+
+The `412` response states that a precondition failed, this could be included in the `400`, however this is more precise in the event of a precondition failing.
+
+#### 415 Unsupported Media Type
+
+The `415` response states that a response was asked for using a content-type, which was not supported.
+
 #### 429 Too Many Requests
 
 The `429` response states that too much load is added from the client side into the service and the client is requested to limits the number 
@@ -387,7 +450,11 @@ of requests as the limits has been reached. A Retry-After header is part of the 
 or
 
     Retry-After: 1200
+
+#### 501 Not Implemented
   
+  The `501` response states that the resource was not yet implemented.
+
 
 #### 503 Service Unavailable
 
@@ -398,6 +465,12 @@ The `503` response states that the server for some reason is unavailable:
 or
 
     Retry-After: 120
+
+#### 505 HTTP Version Not Supported
+  
+  The `505` response states that the protocol version is either not supported anymore (e.g. HTTP 1) 
+  or is not yet supported (e.g. HTTP 2).
+
 
 ## Service terms
 

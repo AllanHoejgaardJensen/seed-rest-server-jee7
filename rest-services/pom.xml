@@ -113,6 +113,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${org.codehaus.cargo.version}</version>
                 <configuration>
                     <skip>${skipTests}</skip>
                     <container>
@@ -181,6 +182,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -201,6 +203,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.version}</version>
                 <configuration>
                     <webResources>
                         <resource>
@@ -284,5 +287,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

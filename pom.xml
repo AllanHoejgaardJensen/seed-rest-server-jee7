@@ -18,8 +18,12 @@
         <jdk.version>1.8</jdk.version>
         <compiler.version>3.6.0</compiler.version>
         <maven.min.version>3.3.9</maven.min.version>
+        <maven.failsafe.version>2.20</maven.failsafe.version>
+        <maven.war.version>3.0.0</maven.war.version>
+        <maven.deploy.version>2.8.2</maven.deploy.version>
         <enforcer.version>1.4.1</enforcer.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.fasterxml.jackson.version>2.8.5</com.fasterxml.jackson.version>
         <com.h2database.h2.version>1.4.186</com.h2database.h2.version>
         <commons-codec.version>1.9</commons-codec.version>
@@ -257,6 +261,11 @@
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>${org.codehaus.cargo.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
