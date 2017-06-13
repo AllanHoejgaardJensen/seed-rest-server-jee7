@@ -57,7 +57,7 @@ public class CustomerEventServiceExposureTest {
         when(archivist.findEvents(Optional.empty()))
                 .thenReturn(eventList);
 
-        Response response = service.listAll(ui, request, "application/hal+json", "");
+        Response response = service.listAll(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765", "");
         EventsRepresentation events = (EventsRepresentation) response.getEntity();
 
         assertEquals(3, events.getEvents().size());
@@ -87,7 +87,7 @@ public class CustomerEventServiceExposureTest {
         }
         assertEquals(3, found);
 
-        response = service.listAll(ui, request, "application/hal+json;no-real-type", "");
+        response = service.listAll(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765", "");
         assertEquals(415,response.getStatus());
 
     }
@@ -108,13 +108,15 @@ public class CustomerEventServiceExposureTest {
                 .thenReturn(Collections.singletonList(new Event(new URI("customer-events/some-category/eventSID"),
                         "some-category", CurrentTime.now())));
 
-        Response response = service.getByCategory(ui, request, "application/hal+json", "some-category", "");
+        Response response = service.getByCategory(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "some-category", "");
         EventsRepresentation events = (EventsRepresentation) response.getEntity();
 
         assertEquals(1, events.getEvents().size());
         assertEquals("http://mock/customer-events", events.getSelf().getHref());
 
-        response = service.getByCategory(ui, request, "application/hal+json;no-real-type", "some-category", "");
+        response = service.getByCategory(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765",
+            "some-category", "");
         assertEquals(415,response.getStatus());
     }
 
@@ -134,14 +136,16 @@ public class CustomerEventServiceExposureTest {
         when(archivist.getEvent("new-card","eventSID"))
                 .thenReturn(new Event(new URI("customers/1010101010/cards")));
 
-        Response response = service.getSingle(ui, request, "application/hal+json", "new-card", "eventSID");
+        Response response = service.getSingle(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "new-card", "eventSID");
         EventRepresentation er = (EventRepresentation) response.getEntity();
 
         assertEquals("default", er.getCategory());
         assertEquals("http://mock/customer-events/default/" + er.getId(), er.getSelf().getHref());
         assertEquals("http://mock/customers/1010101010/cards", er.getOrigin().getHref());
 
-        response = service.getSingle(ui, request, "application/hal+json;no-real-type", "5479-123456", "eventSID");
+        response = service.getSingle(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479-123456", "eventSID");
         assertEquals(415,response.getStatus());
 
     }

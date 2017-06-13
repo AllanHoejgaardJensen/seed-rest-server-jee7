@@ -46,13 +46,13 @@ public class CustomerServiceExposureTest {
         when(archivist.listCustomers())
             .thenReturn(Arrays.asList(new Customer("Hans", "Peter", "Hansen"), new Customer("Anders", "P", "Dinesen")));
 
-        Response response = service.list(ui, request, "application/hal+json");
+        Response response = service.list(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765");
         CustomersRepresentation customers = (CustomersRepresentation) response.getEntity();
 
         assertEquals(2, customers.getCustomers().size());
         assertEquals("http://mock/customers", customers.getSelf().getHref());
 
-        response = service.list(ui, request, "application/hal+json;concept=non.existing;type");
+        response = service.list(ui, request, "application/hal+json;concept=non.existing;type","this-is-a-Log-Token-that-r0cks-98765");
         assertEquals(415,response.getStatus());
 
     }
@@ -66,15 +66,16 @@ public class CustomerServiceExposureTest {
 
         when(archivist.getCustomer("1234567890")).thenReturn(new Customer("Hans", "Peter", "Hansen"));
 
-        CustomerRepresentation customer = (CustomerRepresentation) service.get(ui, request, "1234567890", "application/hal+json"
-        ).getEntity();
+        CustomerRepresentation customer = (CustomerRepresentation) service.get(ui, request, "1234567890", "application/hal+json",
+            "this-is-a-Log-Token-that-r0cks-98765").getEntity();
 
         assertEquals("Hans", customer.getFirstName());
         assertEquals("Peter", customer.getMiddleName());
         assertEquals("Hansen", customer.getSirname());
         assertEquals("http://mock/customers/"+customer.getNumber(), customer.getSelf().getHref());
 
-        Response response = service.get(ui, request, "1234567890", "application/hal+json;concept=customer;v=0");
+        Response response = service.get(ui, request, "1234567890", "application/hal+json;concept=customer;v=0",
+            "this-is-a-Log-Token-that-r0cks-98765");
         assertEquals(415,response.getStatus());
 
     }
@@ -95,7 +96,7 @@ public class CustomerServiceExposureTest {
         when(archivist.findCustomer("1234567890")).thenReturn(Optional.empty());
 
         CustomerRepresentation resp = (CustomerRepresentation) service.createOrUpdate(ui, request, "1234567890",
-                customerUpdate).getEntity();
+            "this-is-a-Log-Token-that-r0cks-98765", customerUpdate).getEntity();
 
         assertEquals("Olesen", resp.getSirname());
         assertEquals("Walther", resp.getFirstName());
@@ -121,7 +122,7 @@ public class CustomerServiceExposureTest {
         when(archivist.findCustomer("1234567890")).thenReturn(Optional.of(customer));
 
         CustomerRepresentation resp = (CustomerRepresentation) service.createOrUpdate(ui, request, "1234567890",
-                customerUpdate).getEntity();
+            "this-is-a-Log-Token-that-r0cks-98765", customerUpdate).getEntity();
 
         assertEquals(customer.getSirname(), customer.getSirname());
         assertEquals(customer.getMiddleName(), resp.getMiddleName());
@@ -139,7 +140,7 @@ public class CustomerServiceExposureTest {
         CustomerUpdateRepresentation customerUpdate = mock(CustomerUpdateRepresentation.class);
         when(customerUpdate.getFirstName()).thenReturn("Hans");
 
-        service.createOrUpdate(ui, request, "1234567890", customerUpdate);
+        service.createOrUpdate(ui, request, "1234567890", "this-is-a-Log-Token-that-r0cks-98765", customerUpdate);
         fail("Should have thrown exception before this step");
     }
 }
