@@ -71,6 +71,14 @@
             <artifactId>swagger-annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -225,6 +233,7 @@
                         <resourcePackage>dk.sample.rest.bank.account.exposure.rs</resourcePackage>
                         <resourcePackage>dk.sample.rest.bank.customer.exposure.rs</resourcePackage>
                         <resourcePackage>dk.sample.rest</resourcePackage>
+                        <resourcePackage>dk.sample.openapi</resourcePackage>
                     </resourcePackages>
                     <swaggerConfig>
                         <descriptionFile>
