@@ -15,19 +15,18 @@ import io.swagger.annotations.ApiModelProperty;
 public class CustomerUpdateRepresentation {
 
     @NotNull
-    @Pattern(regexp = "^[a-zA_Z]{2,40}")
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String firstName;
 
-    @NotNull
-    @Pattern(regexp = "^[a-zA_Z]{2,40}")
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String middleName;
 
     @NotNull
-    @Pattern(regexp = "^[a-zA_Z]{2,40}")
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String sirname;
 
     @NotNull
-    @Pattern(regexp = "^[0_9]{10}")
+    @Pattern(regexp = "^[0-9]{10}")
     private String number;
 
 

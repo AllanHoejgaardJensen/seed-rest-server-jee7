@@ -1,5 +1,7 @@
 package dk.sample.rest.bank.customer.exposure.rs.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.UriInfo;
 
 import dk.nykredit.jackson.dataformat.hal.HALLink;
@@ -19,9 +21,20 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Customer",
         description = "the Customer")
 public class CustomerRepresentation {
+
+    @NotNull
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String firstName;
+
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String middleName;
+
+    @NotNull
+    @Pattern(regexp = "^[a-zA-Z]{2,40}")
     private String sirname;
+
+    @NotNull
+    @Pattern(regexp = "^[0-9]{10}")
     private String number;
 
     @Link

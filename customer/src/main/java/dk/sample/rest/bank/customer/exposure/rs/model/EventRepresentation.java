@@ -1,5 +1,7 @@
 package dk.sample.rest.bank.customer.exposure.rs.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.UriInfo;
 
 import dk.nykredit.jackson.dataformat.hal.HALLink;
@@ -20,9 +22,22 @@ import io.swagger.annotations.ApiModelProperty;
         description = "An immutable event")
 
 public class EventRepresentation {
+
+
+    @NotNull
+    @Pattern(regexp = "^[a-zA-Z-]{36}")
     private String id;
+
+    @NotNull
+    @Pattern(regexp = "^[0-9]{13}")
     private String time;
+
+    @NotNull
+    @Pattern(regexp = "^[0-9]{13}")
     private String sequence;
+
+    @NotNull
+    @Pattern(regexp = "^[a-zA-Z0-9-]{36}]")
     private String category;
 
     @Link
