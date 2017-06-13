@@ -161,6 +161,9 @@
                         <goals>
                             <goal>start</goal>
                         </goals>
+                        <configuration>
+                            <timeout>60000</timeout>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>it.stop</id>
@@ -168,6 +171,9 @@
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                        <configuration>
+                            <timeout>10000</timeout>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
