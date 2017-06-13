@@ -48,13 +48,15 @@ public class TransactionServiceExposureTest {
         when(archivist.getTransactions("5479", "123456", Optional.empty(), Optional.empty(), sort)).thenReturn(
                 Collections.singletonList(new Transaction(account, new BigDecimal("1234.42"), "description")));
 
-        Response response = service.list(ui, request, "application/hal+json","5479", "123456", "", "", "");
+        Response response = service.list(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456", "", "", "");
         TransactionsRepresentation transactions = (TransactionsRepresentation) response.getEntity();
 
         assertEquals(1, transactions.getTransactions().size());
         assertEquals("http://mock/accounts/5479-123456/transactions", transactions.getSelf().getHref());
 
-        response = service.list(ui, request, "application/hal+json;concept=non.existing;type","5479", "123456",
+        response = service.list(ui, request, "application/hal+json;concept=non.existing;type", "this-is-a-Log-Token-that-r0cks-98765"
+            ,"5479", "123456",
                 "", "", "");
         assertEquals(415,response.getStatus());
     }
@@ -72,13 +74,15 @@ public class TransactionServiceExposureTest {
         Transaction dbTransaction = new Transaction(account, new BigDecimal("1234.42"), "description");
         when(archivist.getTransaction("5479", "123456", "xxx-yyy")).thenReturn(dbTransaction);
 
-        Response response = service.get(ui, request, "application/hal+json","5479", "123456", "xxx-yyy");
+        Response response = service.get(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765"
+            ,"5479", "123456", "xxx-yyy");
         TransactionRepresentation transaction = (TransactionRepresentation) response.getEntity();
 
         assertEquals("1234.42", transaction.getAmount());
         assertEquals("http://mock/accounts/5479-123456/transactions/" + dbTransaction.getId(), transaction.getSelf().getHref());
 
-        response = service.get(ui, request, "application/hal+json;concept=non.existing;type", "5479", "123456", "xxx-yyy");
+        response = service.get(ui, request, "application/hal+json;concept=non.existing;type", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456", "xxx-yyy");
         assertEquals(415,response.getStatus());
     }
 
@@ -95,7 +99,8 @@ public class TransactionServiceExposureTest {
         Transaction dbTransaction = new Transaction("human-readable-semantic-identifier", account, new BigDecimal("1234.42"), "a description");
         when(archivist.getTransaction("5479", "123456", "xxx-yyy")).thenReturn(dbTransaction);
 
-        Response response = service.get(ui, request, "application/hal+json","5479", "123456", "xxx-yyy");
+        Response response = service.get(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456", "xxx-yyy");
         TransactionRepresentation transaction = (TransactionRepresentation) response.getEntity();
 
         assertEquals("1234.42", transaction.getAmount());

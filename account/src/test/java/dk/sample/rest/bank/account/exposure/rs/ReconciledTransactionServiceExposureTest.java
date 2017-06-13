@@ -51,13 +51,15 @@ public class ReconciledTransactionServiceExposureTest {
                 .thenReturn(new HashSet<>(Collections.singletonList(rtx)));
         when(archivist.getAccount("5479", "123456")).thenReturn(account);
 
-        Response response = service.list( ui, request, "application/hal+json","5479", "123456");
+        Response response = service.list( ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456");
         ReconciledTransactionsRepresentation reconciledTxs = (ReconciledTransactionsRepresentation) response.getEntity();
 
         assertEquals(1, reconciledTxs.getReconciledTransactions().size());
         assertEquals("http://mock/accounts/5479-123456/reconciled-transactions", reconciledTxs.getSelf().getHref());
 
-        response = service.list( ui, request, "application/hal+json;concept=non.existing;type","5479", "123456");
+        response = service.list( ui, request, "application/hal+json;concept=non.existing;type",
+            "this-is-a-Log-Token-that-r0cks-98765", "5479", "123456");
         assertEquals(415,response.getStatus());
 
     }
@@ -76,7 +78,8 @@ public class ReconciledTransactionServiceExposureTest {
         ReconciledTransaction rtx = new ReconciledTransaction(true, "mocked decorated transaction", tx);
         when(archivist.getReconciledTransaction("5479", "123456", "xxx-yyy")).thenReturn(rtx);
 
-        Response response = service.get( ui, request, "application/hal+json","5479", "123456", "xxx-yyy");
+        Response response = service.get( ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456", "xxx-yyy");
         ReconciledTransactionRepresentation reconciledTx = (ReconciledTransactionRepresentation) response.getEntity();
 
         assertEquals("mocked decorated transaction", reconciledTx.getNote());
@@ -84,7 +87,8 @@ public class ReconciledTransactionServiceExposureTest {
         assertEquals("http://mock/accounts/5479-123456/reconciled-transactions/" + tx.getId(), reconciledTx.getSelf().getHref());
         assertEquals("http://mock/accounts/5479-123456/transactions/" + tx.getId(), reconciledTx.getTransaction().getHref());
 
-        response = service.get( ui, request, "application/hal+json;concept=non.existing;type","5479", "123456", "xxx-yyy");
+        response = service.get( ui, request, "application/hal+json;concept=non.existing;type", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479", "123456", "xxx-yyy");
         assertEquals(415,response.getStatus());
     }
 

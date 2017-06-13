@@ -22,24 +22,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import dk.nykredit.api.capabilities.Sanitizer;
-
 import dk.sample.rest.bank.account.exposure.rs.model.ReconciledTransactionRepresentation;
 import dk.sample.rest.bank.account.exposure.rs.model.ReconciledTransactionUpdateRepresentation;
 import dk.sample.rest.bank.account.exposure.rs.model.ReconciledTransactionsRepresentation;
 import dk.sample.rest.bank.account.model.Account;
 import dk.sample.rest.bank.account.model.ReconciledTransaction;
 import dk.sample.rest.bank.account.model.Transaction;
-
 import dk.sample.rest.bank.account.persistence.AccountArchivist;
 import dk.sample.rest.common.core.logging.LogDuration;
 import dk.sample.rest.common.rs.EntityResponseBuilder;
-import dk.sample.rest.common.rs.error.ErrorRepresentation;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
@@ -50,7 +44,7 @@ import io.swagger.annotations.ExtensionProperty;
 @Stateless
 @Path("/accounts/{regNo}-{accountNo}/reconciled-transactions")
 @Api(value = "/accounts/{regNo}-{accountNo}/reconciled-transactions",
-     tags = {"decorator", "reconciled"})
+    tags = {"decorator", "reconciled"})
 public class ReconciledTransactionServiceExposure {
     private final Map<String, ReconciledTransactionsProducerMethod> reconciledTxsProducers = new HashMap<>();
     private final Map<String, ReconciledTransactionProducerMethod> reconciledTxProducers = new HashMap<>();
@@ -68,94 +62,88 @@ public class ReconciledTransactionServiceExposure {
     }
 
     @GET
-    @Produces({ "application/hal+json", "application/hal+json;concept=reconciledtransactions;v=1"})
+    @Produces({"application/hal+json", "application/hal+json;concept=reconciledtransactions;v=1"})
     @ApiOperation(value = "obtain reconciled transactions (added API capabilities not though not implemented)",
-            response = ReconciledTransactionsRepresentation.class,
-            authorizations = {
-                    @Authorization(value = "oauth2", scopes = {}),
-                    @Authorization(value = "oauth2-cc", scopes = {}),
-                    @Authorization(value = "oauth2-ac", scopes = {}),
-                    @Authorization(value = "oauth2-rop", scopes = {}),
-                    @Authorization(value = "Bearer")
-            },
-            extensions = {@Extension(name = "roles", properties = {
-                    @ExtensionProperty(name = "customer", value = "customer allows getting from own account"),
-                    @ExtensionProperty(name = "advisor", value = "advisor allows getting from every account")}
-            )},
-            tags = {"select", "sort", "elements", "interval", "filter", "embed", "decorator", "reconciled"},
-            notes = "obtain a list of all reconciled transactions from an account" +
+        response = ReconciledTransactionsRepresentation.class,
+        authorizations = {
+            @Authorization(value = "oauth2", scopes = {}),
+            @Authorization(value = "oauth2-cc", scopes = {}),
+            @Authorization(value = "oauth2-ac", scopes = {}),
+            @Authorization(value = "oauth2-rop", scopes = {}),
+            @Authorization(value = "Bearer")
+        },
+        extensions = {@Extension(name = "roles", properties = {
+            @ExtensionProperty(name = "customer", value = "customer allows getting from own account"),
+            @ExtensionProperty(name = "advisor", value = "advisor allows getting from every account")}
+        )},
+        tags = {"select", "sort", "elements", "interval", "filter", "embed", "decorator", "reconciled"},
+        notes = "obtain a list of all reconciled transactions from an account" +
             "the reconciled transactions are user controlled checks and notes for transactions " +
             "such as - Yes I have verified that this transaction was correct and thus it is reconciled",
-            produces = "application/hal+json, application/hal+json;concept=reconciledtransactions;v=1",
-            nickname = "listReconciledTransactions")
-    @ApiResponses(value = {
-            @ApiResponse(code = 415, message = "Content type not supported.")
-        })
+        produces = "application/hal+json, application/hal+json;concept=reconciledtransactions;v=1",
+        nickname = "listReconciledTransactions")
     public Response list(@Context UriInfo uriInfo, @Context Request request,
-            @HeaderParam("Accept") String accept, @PathParam("regNo") String regNo, @PathParam("accountNo") String accountNo
-                         ) {
+                         @HeaderParam("Accept") String accept,
+                         @HeaderParam("X-Log-Token") String xLogToken,
+                         @PathParam("regNo") String regNo, @PathParam("accountNo") String accountNo) {
         return reconciledTxsProducers.getOrDefault(accept, this::handleUnsupportedContentType)
-                .getResponse(uriInfo, request, regNo, accountNo);
+            .getResponse(uriInfo, request, xLogToken, regNo, accountNo);
     }
 
     @GET
     @Path("{id}")
-    @Produces({ "application/hal+json", "application/hal+json;concept=reconciledtransaction;v=1" })
+    @Produces({"application/hal+json", "application/hal+json;concept=reconciledtransaction;v=1"})
     @LogDuration(limit = 50)
     @ApiOperation(value = "obtain a single reconciled transaction from a given account", response = ReconciledTransactionRepresentation.class,
-            authorizations = {
-                    @Authorization(value = "oauth2", scopes = {}),
-                    @Authorization(value = "oauth2-cc", scopes = {}),
-                    @Authorization(value = "oauth2-ac", scopes = {}),
-                    @Authorization(value = "oauth2-rop", scopes = {}),
-                    @Authorization(value = "Bearer")
-            },
-            extensions = {@Extension(name = "roles", properties = {
-                    @ExtensionProperty(name = "customer", value = "customer allows getting own account")}
-            )},
-            produces = "application/hal+json, application/hal+json;concept=reconciledtransaction;v=1",
-            nickname = "getReconciledTransaction")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "No reconciled transaction found."),
-            @ApiResponse(code = 415, message = "Content type not supported.")
-        })
+        authorizations = {
+            @Authorization(value = "oauth2", scopes = {}),
+            @Authorization(value = "oauth2-cc", scopes = {}),
+            @Authorization(value = "oauth2-ac", scopes = {}),
+            @Authorization(value = "oauth2-rop", scopes = {}),
+            @Authorization(value = "Bearer")
+        },
+        extensions = {@Extension(name = "roles", properties = {
+            @ExtensionProperty(name = "customer", value = "customer allows getting own account")}
+        )},
+        produces = "application/hal+json, application/hal+json;concept=reconciledtransaction;v=1",
+        nickname = "getReconciledTransaction")
 
     public Response get(@Context UriInfo uriInfo, @Context Request request,
-                        @HeaderParam("Accept") String accept, @PathParam("regNo") String regNo,
+                        @HeaderParam("Accept") String accept,
+                        @HeaderParam("X-Log-Token") String xLogToken,
+                        @PathParam("regNo") String regNo,
                         @PathParam("accountNo") String accountNo, @PathParam("id") String id) {
         return reconciledTxProducers.getOrDefault(accept, this::handleUnsupportedContentType)
-                .getResponse(uriInfo, request, regNo, accountNo, id);
+            .getResponse(uriInfo, request, xLogToken, regNo, accountNo, id);
     }
 
     @PUT
     @Path("{id}")
-    @Produces({ "application/hal+json" })
+    @Produces({"application/hal+json", "application/hal+json;concept=reconciledtransaction;v=1"})
     @Consumes(MediaType.APPLICATION_JSON)
     @LogDuration(limit = 50)
     @ApiOperation(value = "Create new or update reconciled transaction", response = ReconciledTransactionRepresentation.class,
-            authorizations = {
-                    @Authorization(value = "oauth2", scopes = {}),
-                    @Authorization(value = "oauth2-cc", scopes = {}),
-                    @Authorization(value = "oauth2-ac", scopes = {}),
-                    @Authorization(value = "oauth2-rop", scopes = {}),
-                    @Authorization(value = "Bearer")
-            },
-            extensions = {@Extension(name = "roles", properties = {
-                    @ExtensionProperty(name = "system", value = "customer allows getting coOwned account")}
-            )},
-            notes = "reconciled transactions are user controlled checks and notes for transactions" +
-                    "such as - Yes I have verified that this transaction was correct and thus it is reconciled",
-            nickname = "updateReconciledTransaction")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "No updating possible", response = ErrorRepresentation.class),
-            @ApiResponse(code = 415, message = "Content type not supported.")
-        })
+        authorizations = {
+            @Authorization(value = "oauth2", scopes = {}),
+            @Authorization(value = "oauth2-cc", scopes = {}),
+            @Authorization(value = "oauth2-ac", scopes = {}),
+            @Authorization(value = "oauth2-rop", scopes = {}),
+            @Authorization(value = "Bearer")
+        },
+        extensions = {@Extension(name = "roles", properties = {
+            @ExtensionProperty(name = "system", value = "customer allows getting coOwned account")}
+        )},
+        notes = "reconciled transactions are user controlled checks and notes for transactions" +
+            "such as - Yes I have verified that this transaction was correct and thus it is reconciled",
+        consumes = "application/json, application/json;concept=reconciledtransactionupdate;v=1",
+        produces = "application/hal+json, application/hal+json;concept=reconciledtransaction;v=1",
+        nickname = "updateReconciledTransaction")
     public Response createOrUpdate(@Context UriInfo uriInfo, @Context Request request,
                                    @PathParam("regNo") @Pattern(regexp = "^[0-9]{4}$") String regNo,
                                    @PathParam("accountNo") @Pattern(regexp = "^[0-9]+$") String accountNo,
                                    @PathParam("id") String id,
-                                   @ApiParam(value = "reconciled transaction") @Valid ReconciledTransactionUpdateRepresentation rtx
-                                   ) {
+                                   @HeaderParam("X-Log-Token") String xLogToken,
+                                   @ApiParam(value = "reconciled transaction") @Valid ReconciledTransactionUpdateRepresentation rtx) {
 
 
         String txId = Sanitizer.sanitize(id, false, true);
@@ -166,18 +154,19 @@ public class ReconciledTransactionServiceExposure {
 
         ReconciledTransaction reconciled = new ReconciledTransaction(rtx.getReconciled().contains("true"), rtx.getNote(), tx);
         archivist.save(reconciled);
-        return new EntityResponseBuilder<>(reconciled.getTransaction(), t -> new ReconciledTransactionRepresentation(reconciled, t, uriInfo))
-                .name("reconciledtransaction")
-                .version("1")
-                .maxAge(60)
-                .build(request);
+        return new EntityResponseBuilder<>(reconciled.getTransaction(),
+            t -> new ReconciledTransactionRepresentation(reconciled, t, uriInfo), xLogToken)
+            .name("reconciledtransaction")
+            .version("1")
+            .maxAge(60)
+            .build(request);
     }
 
     @LogDuration(limit = 50)
-    public Response listReconciledTransactionsSG1V1(UriInfo uriInfo, Request request, String regNo, String accountNo) {
+    public Response listReconciledTransactionsSG1V1(UriInfo uriInfo, Request request, String xLogToken, String regNo, String accountNo) {
         Account account = archivist.getAccount(regNo, accountNo);
         return new EntityResponseBuilder<>(account.getReconciledTransactions(),
-            transactions -> new ReconciledTransactionsRepresentation(account, uriInfo))
+            transactions -> new ReconciledTransactionsRepresentation(account, uriInfo), xLogToken)
             .name("reconciledtransactions")
             .version("1")
             .maxAge(10)
@@ -185,10 +174,10 @@ public class ReconciledTransactionServiceExposure {
     }
 
     @LogDuration(limit = 50)
-    public Response getReconciledSG1V1(UriInfo uriInfo, Request request, String regNo, String accountNo, String id) {
+    public Response getReconciledSG1V1(UriInfo uriInfo, Request request, String xLogToken, String regNo, String accountNo, String id) {
         ReconciledTransaction reconciledTransaction = archivist.getReconciledTransaction(regNo, accountNo, id);
         return new EntityResponseBuilder<>(reconciledTransaction,
-            rt -> new ReconciledTransactionRepresentation(rt, rt.getTransaction(), uriInfo))
+            rt -> new ReconciledTransactionRepresentation(rt, rt.getTransaction(), uriInfo), xLogToken)
             .maxAge(24 * 60 * 60)
             .name("reconciledtransaction")
             .version("1")
@@ -199,16 +188,16 @@ public class ReconciledTransactionServiceExposure {
         return tx != null;
     }
 
+    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String... parms) {
+        return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
+    }
+
     interface ReconciledTransactionsProducerMethod {
-        Response getResponse(UriInfo uriInfo, Request request, String regNo, String accountNo);
+        Response getResponse(UriInfo uriInfo, Request request, String xLogToken, String regNo, String accountNo);
     }
 
     interface ReconciledTransactionProducerMethod {
-        Response getResponse(UriInfo uriInfo, Request request, String regNo, String accountNo, String id);
-    }
-
-    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String... parms) {
-        return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
+        Response getResponse(UriInfo uriInfo, Request request, String xLogToken, String regNo, String accountNo, String id);
     }
 
 }

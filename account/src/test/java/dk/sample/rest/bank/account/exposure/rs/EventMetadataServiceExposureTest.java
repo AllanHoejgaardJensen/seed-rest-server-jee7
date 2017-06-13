@@ -35,13 +35,13 @@ public class EventMetadataServiceExposureTest {
         UriInfo ui = mock(UriInfo.class);
         when(ui.getBaseUriBuilder()).then(new UriBuilderFactory(URI.create("http://mock")));
         Request request = mock(Request.class);
-        Response response = service.getMetadata(ui, request, "application/hal+json");
+        Response response = service.getMetadata(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-12345");
         EventsMetadataRepresentation info = (EventsMetadataRepresentation) response.getEntity();
         assertNotNull(info);
         assertTrue(info.getMetadata().contains("purpose"));
         assertEquals("http://mock/account-events-metadata", info.getSelf().getHref());
 
-        response = service.getMetadata( ui, request, "application/hal+json;concept=metadata");
+        response = service.getMetadata( ui, request, "application/hal+json;concept=metadata", "this-is-a-Log-Token-that-r0cks-12345");
         assertEquals(415,response.getStatus());
     }
 
@@ -50,7 +50,7 @@ public class EventMetadataServiceExposureTest {
         UriInfo ui = mock(UriInfo.class);
         when(ui.getBaseUriBuilder()).then(new UriBuilderFactory(URI.create("http://mock")));
         Request request = mock(Request.class);
-        Response response = service.getMetadata(ui, request,"application/hal+json;concept=metadata;v=1");
+        Response response = service.getMetadata(ui, request,"application/hal+json;concept=metadata;v=1", "this-is-a-Log-Token-that-r0cks-12345");
         EventsMetadataRepresentation info = (EventsMetadataRepresentation) response.getEntity();
         assertNotNull(info);
         assertTrue(info.getMetadata().contains("purpose"));

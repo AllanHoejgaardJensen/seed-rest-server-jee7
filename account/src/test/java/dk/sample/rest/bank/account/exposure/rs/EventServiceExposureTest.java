@@ -57,7 +57,7 @@ public class EventServiceExposureTest {
         when(archivist.findEvents(Optional.empty()))
                 .thenReturn(eventList);
 
-        Response response = service.listAll(ui, request, "application/hal+json", "");
+        Response response = service.listAll(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765", "");
         EventsRepresentation events = (EventsRepresentation) response.getEntity();
 
         assertEquals(3, events.getEvents().size());
@@ -87,7 +87,7 @@ public class EventServiceExposureTest {
         }
         assertEquals(3, found);
 
-        response = service.listAll(ui, request, "application/hal+json;no-real-type", "");
+        response = service.listAll(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765", "");
         assertEquals(415,response.getStatus());
 
     }
@@ -108,13 +108,15 @@ public class EventServiceExposureTest {
                 .thenReturn(Collections.singletonList(new Event(new URI("account-events/5479-1234567/eventSID"),
                         "5479-123456", CurrentTime.now())));
 
-        Response response = service.getByCategory(ui, request, "application/hal+json", "5479-123456", "");
+        Response response = service.getByCategory(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479-123456", "");
         EventsRepresentation events = (EventsRepresentation) response.getEntity();
 
         assertEquals(1, events.getEvents().size());
         assertEquals("http://mock/account-events", events.getSelf().getHref());
 
-        response = service.getByCategory(ui, request, "application/hal+json;no-real-type", "5479-123456", "");
+        response = service.getByCategory(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479-123456", "");
         assertEquals(415,response.getStatus());
     }
 
@@ -134,14 +136,16 @@ public class EventServiceExposureTest {
         when(archivist.getEvent("5479-123456","eventSID"))
                 .thenReturn(new Event(new URI("accounts/5479-1234567/transactions/txSID")));
 
-        Response response = service.getSingle(ui, request, "application/hal+json", "5479-123456", "eventSID");
+        Response response = service.getSingle(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479-123456", "eventSID");
         EventRepresentation er = (EventRepresentation) response.getEntity();
 
         assertEquals("http://mock/accounts/5479-1234567/transactions/txSID", er.getOrigin().getHref());
         assertEquals("default", er.getCategory());
         assertEquals("http://mock/account-events/default/" + er.getId(), er.getSelf().getHref());
 
-        response = service.getSingle(ui, request, "application/hal+json;no-real-type", "5479-123456", "eventSID");
+        response = service.getSingle(ui, request, "application/hal+json;no-real-type", "this-is-a-Log-Token-that-r0cks-98765",
+            "5479-123456", "eventSID");
         assertEquals(415,response.getStatus());
 
     }

@@ -46,13 +46,13 @@ public class AccountServiceExposureTest {
         when(archivist.listAccounts())
             .thenReturn(Arrays.asList(new Account("5479", "1", "Checking account"), new Account("5479", "2", "Savings account")));
 
-        Response response = service.list(ui, request, "application/hal+json");
+        Response response = service.list(ui, request, "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765");
         AccountsRepresentation accounts = (AccountsRepresentation) response.getEntity();
 
         assertEquals(2, accounts.getAccounts().size());
         assertEquals("http://mock/accounts", accounts.getSelf().getHref());
 
-        response = service.list(ui, request, "application/hal+json;concept=non.existing;type");
+        response = service.list(ui, request, "application/hal+json;concept=non.existing;type", "this-is-a-Log-Token-that-r0cks-98765");
         assertEquals(415,response.getStatus());
 
     }
@@ -66,13 +66,15 @@ public class AccountServiceExposureTest {
 
         when(archivist.getAccount("5479", "1234")).thenReturn(new Account("5479", "1234", "Savings account"));
 
-        AccountRepresentation account = (AccountRepresentation) service.get(ui, request, "5479", "1234", "application/hal+json").getEntity();
+        AccountRepresentation account = (AccountRepresentation) service.get(ui, request, "5479", "1234",
+             "application/hal+json", "this-is-a-Log-Token-that-r0cks-98765").getEntity();
 
         assertEquals("5479", account.getRegNo());
         assertEquals("1234", account.getAccountNo());
         assertEquals("http://mock/accounts/5479-1234", account.getSelf().getHref());
 
-        Response response = service.get(ui, request, "5479", "1234", "application/hal+json;concept=account;v=0");
+        Response response = service.get(ui, request, "5479", "1234",
+            "application/hal+json;concept=account;v=0", "this-is-a-Log-Token-that-r0cks-98765");
         assertEquals(415,response.getStatus());
 
     }
@@ -91,7 +93,8 @@ public class AccountServiceExposureTest {
 
         when(archivist.findAccount("5479", "12345678")).thenReturn(Optional.empty());
 
-        AccountRepresentation resp = (AccountRepresentation) service.createOrUpdate(ui, request, "5479", "12345678", accountUpdate).getEntity();
+        AccountRepresentation resp = (AccountRepresentation) service.createOrUpdate(ui, request, "5479", "12345678",
+            "this-is-a-Log-Token-that-r0cks-98765", accountUpdate).getEntity();
 
         assertEquals("new Account", resp.getName());
         assertEquals("5479", resp.getRegNo());
@@ -114,7 +117,8 @@ public class AccountServiceExposureTest {
         when(accountUpdate.getRegNo()).thenReturn("5479");
         when(accountUpdate.getAccountNo()).thenReturn("12345678");
 
-        AccountRepresentation resp = (AccountRepresentation) service.createOrUpdate(ui, request, "5479", "12345678", accountUpdate).getEntity();
+        AccountRepresentation resp = (AccountRepresentation) service.createOrUpdate(ui, request, "5479", "12345678",
+            "this-is-a-Log-Token-that-r0cks-98765", accountUpdate).getEntity();
 
         //name of the existing account should be updated
         assertEquals("new name", existingAcc.getName());
@@ -133,7 +137,8 @@ public class AccountServiceExposureTest {
         when(accountUpdate.getRegNo()).thenReturn("5479");
         when(accountUpdate.getAccountNo()).thenReturn("12345678");
 
-        service.createOrUpdate(ui, request, "5479", "87654321", accountUpdate);
+        service.createOrUpdate(ui, request, "5479", "87654321",
+            "this-is-a-Log-Token-that-r0cks-98765", accountUpdate);
         fail("Should have thrown exception before this step");
     }
 }

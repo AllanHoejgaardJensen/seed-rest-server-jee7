@@ -3,6 +3,7 @@ package dk.sample.rest.common.rs;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -31,27 +32,59 @@ public class EntityResponseBuilder<E, R> {
      * Hal+json media type.
      */
     public static final MediaType APPLICATION_HAL_JSON_TYPE = MediaType.valueOf(APPLICATION_HAL_JSON);
-
+    private final E entity;
+    private final Function<E, R> mapper;
 
     private String name;
     private String version;
     private Integer maxAge;
+    private String logToken;
 
     /**
-     * mediatypes for servers with support for content-type parameters
+     * the rate limits headers values as a number of requests left - default value for not set is "-1"
      */
-    private boolean supportsContentTypeParameter = true;
-    private final E entity;
-    private final Function<E, R> mapper;
+    private String rateLimitTime2Reset = "-1";
+    /**
+     * the rate limits reset headers value denotes the time left to a reset of the rate limit in milliseconds - not set value is "-1"
+     */
+    private String rateLimit = "-1";
+    /**
+     * the rate limits 24h headers values is the number of requests for 24h - default value for not set is "-1"
+     */
+    private String rateLimit24h = "-1";
+    /**
+     * the rate limits remaining header values as a number of requests left - default value for not set is "-1"
+     */
+    private String rateLimitRemaining = "-1";
+
+    public EntityResponseBuilder(E entity, Function<E, R> mapper) {
+        this(entity, mapper, "");
+    }
 
     /**
      * Construct new builder giving the entity and a mapper able to map the entity to a concrete representation. If the
      * given entity is an implementation of {@link AbstractAuditable} the last modified time from this will be use in
      * the <code>last-modified</code> header.
      */
-    public EntityResponseBuilder(E entity, Function<E, R> mapper) {
+    public EntityResponseBuilder(E entity, Function<E, R> mapper, String token) {
         this.entity = entity;
         this.mapper = mapper;
+        this.logToken = (token != null && !"".equals(token.trim())) ? token : UUID.randomUUID().toString();
+    }
+
+    /**
+     * transforms content parameters delivered as "concept" and "v" e.g.
+     * <p>
+     * "concept", "Account"
+     * "v", "1.0.0"
+     * <p>
+     * into:
+     * <p>
+     * application/hal+json;concept=account;v=1.0.0
+     * <p>
+     */
+    public static MediaType getMediaType(Map<String, String> parameters) {
+        return new MediaType("application", "hal+json", parameters);
     }
 
     /**
@@ -71,18 +104,42 @@ public class EntityResponseBuilder<E, R> {
     }
 
     /**
-     * Sets the concept version used in the <code>v</code> content type parameter.
-     */
-    public EntityResponseBuilder<E, R> contentTypeParameters(boolean supported) {
-        this.supportsContentTypeParameter = supported;
-        return this;
-    }
-
-    /**
      * Sets the max age in seconds.
      */
     public EntityResponseBuilder<E, R> maxAge(int maxAge) {
         this.maxAge = maxAge;
+        return this;
+    }
+
+    /**
+     * Sets the rate limit calls per minute.
+     */
+    public EntityResponseBuilder<E, R> rateLimitPerMinute(long number) {
+        this.rateLimit = Long.toString(number);
+        return this;
+    }
+
+    /**
+     * Sets the rate limit calls per 24 hours.
+     */
+    public EntityResponseBuilder<E, R> rateLimitPer24h(long number) {
+        this.rateLimit24h = Long.toString(number);
+        return this;
+    }
+
+    /**
+     * Sets the rate limit reset time in milliseconds.
+     */
+    public EntityResponseBuilder<E, R> rateLimitReset(long time2Reset) {
+        this.rateLimitTime2Reset = Long.toString(time2Reset);
+        return this;
+    }
+
+    /**
+     * Sets the rate limit reset time in milliseconds.
+     */
+    public EntityResponseBuilder<E, R> rateLimitRemaining(long number) {
+        this.rateLimitRemaining = Long.toString(number);
         return this;
     }
 
@@ -106,47 +163,24 @@ public class EntityResponseBuilder<E, R> {
         if (version != null) {
             parameters.put("v", version);
         }
-        MediaType type = getMediaType(parameters, supportsContentTypeParameter);
+        MediaType type = getMediaType(parameters);
 
         Response.ResponseBuilder b = Response.ok(mapper.apply(entity))
-                .type(type)
-                .tag(eTag)
-                .lastModified(lastModified);
+            .type(type)
+            .tag(eTag)
+            .lastModified(lastModified);
 
         if (maxAge != null) {
             CacheControl cc = new CacheControl();
             cc.setMaxAge(maxAge);
             b.cacheControl(cc).expires(Date.from(Instant.now().plusSeconds(maxAge)));
         }
-
+        parameters.put("X-Log-Token", logToken);
+        parameters.put("X-RateLimit-Limit", rateLimit);
+        parameters.put("X-RateLimit-Limit-24h", rateLimit24h);
+        parameters.put("X-RateLimit-Remaining", rateLimitRemaining);
+        parameters.put("X-RateLimit-Reset", rateLimitTime2Reset);
         return b.build();
-    }
-
-    /**
-     * transforms content parameters delivered as "concept" and "v" e.g.
-     *
-     *  "concept", "Account"
-     *  "v", "1.0.0"
-     *
-     *  into:
-     *
-     *  application/hal+json;concept=account;v=1.0.0
-     *
-     *  as content-type for situations where the use of the accept content-type parameter is supported
-     *  and into:
-     *
-     *  application/hal+json+account+v1+0+0
-     *
-     *  as content-type for situations where the use of the accept content-type parameter is NOT supported
-     *
-     */
-    public static MediaType getMediaType(Map<String, String> parameters, boolean supportsContentTypeParameter) {
-        if (supportsContentTypeParameter) {
-            return new MediaType("application", "hal+json", parameters);
-        } else {
-            return new MediaType("application", "hal+json+" + parameters.get("concept").toLowerCase()
-                    + "+v" + parameters.get("v").toLowerCase().replace('.', '+'));
-        }
     }
 
 }
