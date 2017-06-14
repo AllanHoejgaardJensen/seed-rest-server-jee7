@@ -23,13 +23,13 @@ import dk.nykredit.jackson.dataformat.hal.HALMapper;
 @Provider
 @Consumes({ "application/hal+json", MediaType.APPLICATION_JSON })
 @Produces({ "application/hal+json", MediaType.APPLICATION_JSON })
-public class NykreditJsonProvider extends JacksonJsonProvider {
+public class HalJsonProvider extends JacksonJsonProvider {
 
-    public NykreditJsonProvider() {
+    public HalJsonProvider() {
         this(new HALMapper());
     }
 
-    public NykreditJsonProvider(ObjectMapper mapper) {
+    public HalJsonProvider(ObjectMapper mapper) {
         mapper.registerModule(new JavaTimeModule());
         mapper.registerModule(new Jdk8Module());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);

@@ -95,7 +95,7 @@ public final class JaxRsRuntime {
     }
 
     public static Set<Class<?>> getSerializers() {
-        Set<Class<?>> serializers = new HashSet<>(Collections.singleton(NykreditJsonProvider.class));
+        Set<Class<?>> serializers = new HashSet<>(Collections.singleton(HalJsonProvider.class));
         if (runtime() == Runtime.JERSEY) {
             serializers.add(DisableJerseyMOXyFeature.class);
         }
