@@ -14,7 +14,7 @@ The API can be versioned at the structural level by means of a HTTP Header and a
 
 ### Example of content versioning
 
-If a client puts `application/hal+json` in  the `Accept` header - that client will get the newest eiditon of content produced with the default projection from the target endpoint of the request.
+If a client puts `application/hal+json` in  the `Accept` header - that client will get the newest edition of content produced with the default projection from the target endpoint of the request.
 
 That might be `application/hal+json;concept=account;v=1` today and be `application/hal+json;concept=account;v=2` next week. 
 
@@ -34,7 +34,7 @@ A number of headers are used:
 
 A `X-Log-Token` header is used to give a client the opportunity to relate a number of calls and activities to a context.
 
-If the client includes a `X-Log-Token` header and a value associated with that, the value will be extended with a timetick initially to
+If the client includes a `X-Log-Token` header and a value associated with that, the value will be extended with a time tick initially to
 ensure uniqueness. The original `X-Log-Token` is returned in every response from the service, the client must include the unique token received
 in the response in the following requests if the correlation is still what the client wants.
 
@@ -138,7 +138,7 @@ consensus on a derived capability like :
 
 Sensitive Semantic ID deconstruction
 
-- generation of non-sensitive semantic key for objects that has a sensitive semantical key in the form of something that has a better developer
+- generation of non-sensitive semantic key for objects that has a sensitive semantic key in the form of something that has a better developer
   experience than e.g. UUIDs can offer.
 
 ### Selection API Capability
@@ -147,7 +147,7 @@ Selection by criteria is done using a Query Parameter called `select`.
 
 The syntax is:
 
-    select="<attribute>::<value>|<atribute>::<value>|..."
+    select="<attribute>::<value>|<attribute>::<value>|..."
 
 #### Simple Example
 
@@ -272,7 +272,7 @@ The syntax is:
 
     https://banking.services.sample-bank.dk/customers/1234-56789?embed="transaction::list|owner::sparse"
 
-ideally returns a json response including `_links` and `_embeddded` objects inside the response containing either a map or array of transactions
+ideally returns a json response including `_links` and `_embedded` objects inside the response containing either a map or array of transactions
 with links in the `_links` object and the desired projection in the `_embedded` object for both owner and transactions.
 
 The service can choose to return just the customers including links to transactions under the `_links` object as this is allowed by HAL.
@@ -287,7 +287,7 @@ a UUID is suggested or a semi-semantic approach like firstName-middleName-sirNam
 readable (yet not revealing) id for a person.
 
 Other suggested methods have been to create a hash(sensitive semantic key), which might work but will be vulnerable to a brute force
-reengineering effort. The response to that is often to salt it, that is salt(hash(sensitive sementic key)), and that is ok but it seems merely
+re-engineering effort. The response to that is often to salt it, that is salt(hash(sensitive semantic key)), and that is ok but it seems merely
 to be a very difficult way to create a UUID. This means we have a key that is developer unfriendly - at least compared to the more human
 readable key consisting of recognizable fragments from the real world.
 
@@ -309,7 +309,7 @@ Therefore the server returns a `503` error code (see response codes below) with 
 the server is no longer busy and can serve a consumer again.
 
 If the server-side intercepts the consumer it may choose to return a `429` *Too many Requests* with a response stating that "You are limited to
-XXXX requests per hour per `access_token` or `client_id` in total per `timeunit` overall, which clients can follow from the response headers `X-RateLimit-*`.
+# requests per hour per `access_token` or `client_id` in total per `time unit` overall, which clients can follow from the response headers `X-RateLimit-*`.
 
 ## Responses
 
@@ -363,7 +363,7 @@ information can be obtained later. To be nice, the `Retry-After` header may issu
     Retry-After: 30
   
 If the endpoint may take longer than e.g. 50ms it would be sound advice to include 202 from the beginning in the API description.
-It is important to notice that the introduction of a 202 response would cause consumers to percieve that as a breaking change for the API
+It is important to notice that the introduction of a 202 response would cause consumers to perceive that as a breaking change for the API
 and thus the service generation must be increased and therefore consumers of the "previous" version without the 202 must include the header
 `X-Service-Generation` in the consumer requests.
 

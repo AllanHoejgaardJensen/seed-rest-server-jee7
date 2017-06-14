@@ -35,7 +35,7 @@ public final class DurationLogger implements AutoCloseable {
 
     /**
      * Construct a logging (starting a log time frame right away, this may be
-     * restartet invoking {@link #start()}). Providing string class name
+     * restarted invoking {@link #start()}). Providing string class name
      */
     public DurationLogger(String clazzName, String system, String extra, long limit) {
         this.clazzName = clazzName;

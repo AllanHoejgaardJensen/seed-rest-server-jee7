@@ -354,7 +354,7 @@ public class Responses {
         Map<String, Response> responses = operation.getResponses();
         Response response = new Response();
         if (!responses.containsKey(key)) {
-            response.description("This method i currently not implemented");
+            response.description("This method is currently not implemented");
         } else {
             response = operation.getResponses().get(key);
         }

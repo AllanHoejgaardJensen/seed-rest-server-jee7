@@ -228,7 +228,7 @@ public class AccountServiceExposure {
             .build(request);
     }
 
-    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String... parms) {
+    Response handleUnsupportedContentType(UriInfo uriInfo, Request request, String... params) {
         return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
     }
 

@@ -292,7 +292,7 @@ public class AccountServiceExposureIT {
 
         txCreate = new ConcurrentHashMap<>();
         txCreate.put("amount", "1000,01"); //wrong format
-        txCreate.put("description", "millenium just passed");
+        txCreate.put("description", "millennium just passed");
         try {
             response = target.path("accounts").path("5479-1234567").path("transactions")
                     .path("one-long-technical-id-show-too")
@@ -303,14 +303,14 @@ public class AccountServiceExposureIT {
                     .header("X-Log-Token", DiagnosticContext.getLogToken())
                     .header("Authorization", "Bearer " + accessToken)
                     .put(Entity.entity(txCreate, MediaType.APPLICATION_JSON_TYPE), Map.class);
-            fail("Should not be able to handle amounts formatted with , it only suppports .");
+            fail("Should not be able to handle amounts formatted with , it only supports .");
         } catch (BadRequestException bre) {
             //expected
         }
 
         txCreate = new ConcurrentHashMap<>();
         txCreate.put("amount", "1000.1");
-        txCreate.put("description", "millenium just passed");
+        txCreate.put("description", "millennium just passed");
         try {
             response = target.path("accounts").path("5479-1234567").path("transactions")
                     .path("one-long-technical-id-show-too")

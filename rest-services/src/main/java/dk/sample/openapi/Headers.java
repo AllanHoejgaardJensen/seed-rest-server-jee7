@@ -31,7 +31,7 @@ public class Headers {
      */
     private static void addAcceptContentTypeHeader(Operation operation) {
         String header = "Accept";
-        String description = "Default that is set to application/hal+json and that will return the most recent version" +
+        String description = "Default that is set to application/hal+json and that will return the most recent version " +
             "of content. If you want another version use application/hal+json;concept=(the projection);v=(the version)";
         String pattern = "((application\\/hal\\+json)+(, )?(;concept=[a-z][a-z0-9]+)?(;v=[0-9]+)?(, )*)+";
         if (headerDoesNotExist(operation, header)) {
@@ -67,7 +67,7 @@ public class Headers {
 
     private static void addServiceGenerationHeader(Operation operation) {
         String header = "X-Service-Generation";
-        String description = "A service generation ID that allows consumers to specify an API structure version" +
+        String description = "A service generation ID that allows consumers to specify an API structure version " +
             "other than the current one. If not present the most recent will be chosen";
         String pattern = "^[0-9]{1}.[0-9]{1}.[0-9]{1}";
         if (headerDoesNotExist(operation, header)) {
@@ -118,7 +118,7 @@ public class Headers {
         List<Parameter> parameters = operation.getParameters();
         if (null != parameters) {
             parameter = parameters.stream()
-                .filter(parm -> parm.getName().equals(header))
+                .filter(param -> param.getName().equals(header))
                 .findFirst()
                 .get();
             if (null != parameter) {
