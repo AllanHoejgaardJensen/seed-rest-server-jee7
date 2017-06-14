@@ -66,7 +66,7 @@ public class AccountEventServiceExposure {
     @ApiOperation(
         value = "obtain all events emitted by the account-event service", response = EventsRepresentation.class,
         notes = " the events are signalled by this resource as this this is the authoritative resource for all events that " +
-            "subscribers to the account service should be able to listen for and react to. In other words this is the authoritative" +
+            "subscribers to the account service should be able to listen for and react to. In other words this is the authoritative " +
             "feed for the account service",
         authorizations = {
             @Authorization(value = "oauth2", scopes = {}),
@@ -93,7 +93,7 @@ public class AccountEventServiceExposure {
     @Produces({"application/hal+json", "application/hal+json;concept=eventcategory;v=1"})
     @ApiOperation(value = "obtain all events scoped to a certain category", response = EventsRepresentation.class,
         notes = " the events are signalled by this resource as this this is the authoritative resource for all events that " +
-            "subscribers to the account service should be able to listen for and react to. In other words this is the authoritative" +
+            "subscribers to the account service should be able to listen for and react to. In other words this is the authoritative " +
             "feed for the account service, allowing for subscribers to have these grouped into categories",
         authorizations = {
             @Authorization(value = "oauth2", scopes = {}),

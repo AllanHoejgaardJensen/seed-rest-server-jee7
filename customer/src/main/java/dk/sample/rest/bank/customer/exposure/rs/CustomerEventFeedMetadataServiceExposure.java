@@ -60,7 +60,7 @@ public class CustomerEventFeedMetadataServiceExposure {
             @Authorization(value = "Bearer")
         },
         notes = " the events are signalled by this resource as this this is the authoritative resource for all events that " +
-            "subscribers to the customer service should be able to listen for and react to. In other words this is the authoritative" +
+            "subscribers to the customer service should be able to listen for and react to. In other words this is the authoritative " +
             "feed for the customer service",
         tags = {"events"},
         produces = "application/hal+json,  application/hal+json;concept=metadata;v=1",
