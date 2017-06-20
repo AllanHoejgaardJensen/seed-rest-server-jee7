@@ -1,7 +1,8 @@
 # Seed-REST-Server-JEE7
 This is a sample REST service based on JEE7.
  
- ![status](https://travis-ci.org/AllanHoejgaardJensen/seed-rest-server-jee7.svg?branch=master)  
+ ![status](https://travis-ci.org/AllanHoejgaardJensen/seed-rest-server-jee7.svg?branch=master) 
+ ![coverage](https://codecov.io/gh/AllanHoejgaardJensen/seed-rest-server-jee7/coverage.svg?branch=master)
 
 ## Deployment
 The sample has two very simple concepts - "account" and customer" - which is assembled into one deployable war file.
