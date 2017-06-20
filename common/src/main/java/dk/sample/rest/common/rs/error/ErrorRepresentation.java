@@ -10,9 +10,7 @@ import javax.ws.rs.core.UriBuilderException;
 import dk.nykredit.jackson.dataformat.hal.HALLink;
 import dk.nykredit.jackson.dataformat.hal.annotation.Link;
 import dk.nykredit.jackson.dataformat.hal.annotation.Resource;
-
 import dk.sample.rest.common.core.diagnostic.DiagnosticContext;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

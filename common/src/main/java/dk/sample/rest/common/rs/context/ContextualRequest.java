@@ -3,7 +3,6 @@ package dk.sample.rest.common.rs.context;
 import javax.servlet.http.HttpServletRequest;
 
 import dk.sample.rest.common.core.context.Context;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -7,12 +7,10 @@ import javax.ws.rs.core.UriInfo;
 import dk.nykredit.jackson.dataformat.hal.HALLink;
 import dk.nykredit.jackson.dataformat.hal.annotation.Link;
 import dk.nykredit.jackson.dataformat.hal.annotation.Resource;
-
 import dk.sample.rest.bank.account.exposure.rs.AccountServiceExposure;
 import dk.sample.rest.bank.account.exposure.rs.TransactionServiceExposure;
 import dk.sample.rest.bank.account.model.Account;
 import dk.sample.rest.bank.account.model.Transaction;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

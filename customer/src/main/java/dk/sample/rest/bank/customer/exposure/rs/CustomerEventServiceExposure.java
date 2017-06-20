@@ -28,7 +28,6 @@ import dk.sample.rest.bank.customer.model.Event;
 import dk.sample.rest.bank.customer.persistence.CustomerArchivist;
 import dk.sample.rest.common.core.logging.LogDuration;
 import dk.sample.rest.common.rs.EntityResponseBuilder;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -67,8 +66,8 @@ public class CustomerEventServiceExposure {
     @ApiOperation(
             value = "obtain all events emitted by the customer-event service", response = EventsRepresentation.class,
             notes = " the events are signalled by this resource as this this is the authoritative resource for all events that " +
-                    "subscribers to the customers service should be able to listen for and react to. In other words this is the authoritative " +
-                    "feed for the customers service",
+                    "subscribers to the customers service should be able to listen for and react to. In other words this is the " +
+                    "authoritative feed for the customers service",
             authorizations = {
                     @Authorization(value = "oauth2", scopes = {}),
                     @Authorization(value = "oauth2-cc", scopes = {}),
@@ -94,8 +93,8 @@ public class CustomerEventServiceExposure {
     @Produces({ "application/hal+json", "application/hal+json;concept=eventcategory;v=1"})
     @ApiOperation(value = "obtain all events scoped to a certain category", response = EventsRepresentation.class,
             notes = " the events are signalled by this resource as this this is the authoritative resource for all events that " +
-                    "subscribers to the customer service should be able to listen for and react to. In other words this is the authoritative " +
-                    "feed for the customer service, allowing for subscribers to have these grouped into categories",
+                    "subscribers to the customer service should be able to listen for and react to. In other words this is the " +
+                    "authoritative feed for the customer service, allowing for subscribers to have these grouped into categories",
             authorizations = {
                     @Authorization(value = "oauth2", scopes = {}),
                     @Authorization(value = "oauth2-cc", scopes = {}),

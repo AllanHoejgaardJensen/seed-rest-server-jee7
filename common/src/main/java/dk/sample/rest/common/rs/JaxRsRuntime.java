@@ -8,7 +8,6 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import dk.sample.rest.common.rs.filter.OriginFilter;
 import dk.sample.rest.common.rs.jersey.DisableJerseyMOXyFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,7 +17,6 @@ import javax.persistence.TypedQuery;
 import dk.nykredit.api.capabilities.Element;
 import dk.nykredit.api.capabilities.Interval;
 import dk.nykredit.api.capabilities.Sort;
-
 import dk.sample.rest.bank.account.model.Account;
 import dk.sample.rest.bank.account.model.Event;
 import dk.sample.rest.bank.account.model.ReconciledTransaction;

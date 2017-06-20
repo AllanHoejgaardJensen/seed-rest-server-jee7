@@ -7,10 +7,8 @@ import javax.ws.rs.core.UriInfo;
 import dk.nykredit.jackson.dataformat.hal.HALLink;
 import dk.nykredit.jackson.dataformat.hal.annotation.Link;
 import dk.nykredit.jackson.dataformat.hal.annotation.Resource;
-
 import dk.sample.rest.bank.customer.exposure.rs.CustomerEventServiceExposure;
 import dk.sample.rest.bank.customer.model.Event;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
