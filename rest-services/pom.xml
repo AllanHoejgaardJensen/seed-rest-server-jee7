@@ -152,6 +152,7 @@
                             <artifactId>${project.artifactId}</artifactId>
                             <type>war</type>
                             <pingURL>http://localhost:7001/sample/ping</pingURL>
+                            <pingTimeout>60000</pingTimeout>
                         </deployable>
                     </deployables>
                 </configuration>
@@ -162,9 +163,6 @@
                         <goals>
                             <goal>start</goal>
                         </goals>
-                        <configuration>
-                            <timeout>60000</timeout>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>it.stop</id>
@@ -172,9 +170,6 @@
                         <goals>
                             <goal>stop</goal>
                         </goals>
-                        <configuration>
-                            <timeout>10000</timeout>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
